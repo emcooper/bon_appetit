@@ -1,4 +1,5 @@
 require './lib/pantry'
+require './lib/recipe'
 require 'minitest/autorun'
 require 'minitest/pride'
 
@@ -50,4 +51,43 @@ class PantryTest < Minitest::Test
     assert_equal 10, pantry.stock_check("cheese")
     assert_equal 30, pantry.stock_check("cereal")
   end 
+  
+  def test_convert_units_converts_to_appropriate_units
+    r = Recipe.new("Spicy Cheese Pizza")
+    r.add_ingredient("Cayenne Pepper", 0.025)
+    r.add_ingredient("Cheese", 75)
+    r.add_ingredient("Flour", 500)
+    pantry = Pantry.new
+    
+    expected = {"Cayenne Pepper" => {quantity: 25, units: "Milli-Units"},
+                "Cheese"         => {quantity: 75, units: "Universal Units"},
+                "Flour"          => {quantity: 5, units: "Centi-Units"}}
+    
+    assert_equal expected, pantry.convert_units(r)
+  end 
+  
+  def test_convert_returns_converted_hash
+    pantry = Pantry.new
+    
+    assert_equal ({quantity: 2, units: "Centi-Units"}),pantry.convert(200)
+    assert_equal ({quantity: 100, units: "Milli-Units"}), pantry.convert(0.1)
+    assert_equal ({quantity: 50, units: "Universal Units"}),pantry.convert(50)
+  end 
+  
+  def test_to_centi_units_changes_hash_values_centi_units
+    pantry = Pantry.new
+    units = {quantity: 500, units: "Universal Units"}
+    pantry.to_centi_units(units)
+    
+    assert_equal ({quantity: 5, units: "Centi-Units"}), units 
+  end 
+  
+  def test_to_milli_units_changes_hash_values_to_milli_units
+    pantry = Pantry.new
+    units = {quantity: 0.03, units: "Universal Units"}
+    pantry.to_milli_units(units)
+    
+    assert_equal ({quantity: 30, units: "Milli-Units"}), units 
+  end 
+    
 end
