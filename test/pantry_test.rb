@@ -4,11 +4,12 @@ require 'minitest/autorun'
 require 'minitest/pride'
 
 class PantryTest < Minitest::Test
-  def test_it_exists_and_initializes_with_empty_stock
+  def test_it_exists_and_initializes_with_empty_stock_and_shoppping_list
     pantry = Pantry.new
     
     assert_instance_of Pantry, pantry
     assert_equal ({}), pantry.stock
+    assert_equal ({}), pantry.shopping_list
   end 
   
   def test_stock_check_returns_0_if_item_is_not_in_stock
@@ -88,6 +89,36 @@ class PantryTest < Minitest::Test
     pantry.to_milli_units(units)
     
     assert_equal ({quantity: 30, units: "Milli-Units"}), units 
+  end 
+  
+  def test_add_to_shopping_list_returns_adds_ingredients_and_quantities
+    pantry = Pantry.new
+    r = Recipe.new("Cheese Pizza")
+    r.add_ingredient("Cheese", 20)
+    r.add_ingredient("Flour", 20)
+    pantry.add_to_shopping_list(r)
+    
+    expected = {"Cheese" => 20, "Flour" => 20}
+    
+    assert_equal expected, pantry.shopping_list
+  end 
+  
+  def test_add_to_shopping_list_can_adds_multiple_recipes_with_overlapping_ingredients
+    pantry = Pantry.new
+    r1 = Recipe.new("Cheese Pizza")
+    r1.add_ingredient("Cheese", 20)
+    r1.add_ingredient("Flour", 20)
+    pantry.add_to_shopping_list(r1)
+    
+    r2 = Recipe.new("Spaghetti")
+    r2.add_ingredient("Noodles", 10)
+    r2.add_ingredient("Sauce", 10)
+    r2.add_ingredient("Cheese", 5)
+    pantry.add_to_shopping_list(r2)
+    
+    expected = {"Cheese" => 25, "Flour" => 20, "Noodles" => 10, "Sauce" => 10}
+    
+    assert_equal expected, pantry.shopping_list
   end 
     
 end

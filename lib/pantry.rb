@@ -1,9 +1,9 @@
-#require './lib/recipe'
 
 class Pantry
-  attr_reader :stock
+  attr_reader :stock, :shopping_list
   def initialize
     @stock = {} 
+    @shopping_list = {}
   end 
   
   def stock_check(item)
@@ -37,5 +37,12 @@ class Pantry
   def to_milli_units(result)
     result[:quantity] *= 1000 
     result[:units] = "Milli-Units"
+  end 
+  
+  def add_to_shopping_list(recipe)
+    recipe.ingredients.each do |k, v|
+      @shopping_list[k] = 0 if @shopping_list[k].nil?
+      @shopping_list[k] += v
+    end 
   end 
 end
