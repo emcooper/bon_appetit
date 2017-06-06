@@ -120,5 +120,15 @@ class PantryTest < Minitest::Test
     
     assert_equal expected, pantry.shopping_list
   end 
+  
+  def test_print_shopping_list_prints_and_returns_list_with_bullets
+    pantry = Pantry.new
+    r1 = Recipe.new("Cheese Pizza")
+    r1.add_ingredient("Cheese", 20)
+    r1.add_ingredient("Flour", 20)
+    pantry.add_to_shopping_list(r1)
     
+    assert_output("* Cheese: 20\n* Flour: 20\n") {pantry.print_shopping_list}
+    assert_equal "* Cheese: 20\n* Flour: 20\n", pantry.print_shopping_list
+  end 
 end

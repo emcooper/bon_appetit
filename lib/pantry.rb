@@ -45,4 +45,12 @@ class Pantry
       @shopping_list[k] += v
     end 
   end 
+  
+  def print_shopping_list
+    output = ""
+    @shopping_list.each {|k, v| output << "* #{k}: #{v}\n"}
+    puts output
+    return output
+  end 
+  
 end
