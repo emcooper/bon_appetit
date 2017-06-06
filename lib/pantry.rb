@@ -1,4 +1,3 @@
-
 class Pantry
   attr_reader :stock, :shopping_list
   def initialize
@@ -23,20 +22,24 @@ class Pantry
   end 
   
   def convert(u_units)
-    result = {:quantity => u_units, :units => "Universal Units"}
-    to_centi_units(result) if u_units > 100
-    to_milli_units(result) if u_units < 1  
+    result = [{:quantity => u_units, :units => "Universal Units"}]
+    result = to_centi_units(result) if u_units > 100
+    result = to_milli_units(result) if u_units % 1 != 0
     return result
   end 
   
   def to_centi_units(result)
-    result[:quantity] /= 100 
-    result[:units] = "Centi-Units"
+    u_units = result[0][:quantity]
+    result = [{:quantity => u_units/100, :units => "Centi-Units"}]
+    result << {:quantity => u_units % 100, :units => "Universal Units"} if u_units % 100 != 0
+    return result
   end 
   
   def to_milli_units(result)
-    result[:quantity] *= 1000 
-    result[:units] = "Milli-Units"
+    u_units = result[0][:quantity]
+    result = [{:quantity => ((u_units % 1).round(10) * 1000).to_i, :units => "Milli-Units"}]
+    result << {:quantity => u_units.to_i, :units => "Universal Units"} if u_units > 1
+    return result
   end 
   
   def add_to_shopping_list(recipe)
@@ -52,5 +55,4 @@ class Pantry
     puts output
     return output
   end 
-  
 end
